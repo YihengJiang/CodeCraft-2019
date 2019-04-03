@@ -1,0 +1,460 @@
+#pragma once
+
+#include <iostream>
+#include <vector>
+
+#include <string>
+#include "elements/Car.h"
+#include "elements/Cross.h"
+#include "elements/Road.h"
+#include "elements/Answer.h"
+#include "Scheduler.h"
+#include <cmath>
+#include <algorithm>
+#include <map>
+#include <numeric>
+
+
+using namespace std;
+
+class Process {
+
+private:
+//    vector<vector<int>> res;
+//
+//    void generateRoadId(const vector<Car> &car, const vector<Road> &road, const vector<Cross> &cross) {
+////        if (car.size() == 0) {
+////            return;
+////        }
+////
+////        for (int i = 0; i < car.size(); i++) {
+////
+////
+////        }
+//
+//    }
+//
+//    void findRoadId(const int from, const int to, const vector<Road> &road, const vector<Cross> &cross) {
+//
+//    }
+
+    /*useful methods :
+     * floyd
+     * floyd2
+     * floyd4  best
+     * */
+
+
+    //super parameters:
+    int maxStartTime = 3000;//-1 is default value, 800 is the best value
+    int carFactor[2] = {1, 1};//{n,0} is default value
+    /* The first number is roadLength/numberCarInThisRoad,
+     i.e., it should close to average distance for all cars in this road.
+     When the car in this road is overflow,
+     the second number is delay time for a car who should go at this time in this road.
+     note that we should adjust maxStartTime firstly, and then adjust carFactor.
+     */
+
+
+    int findCrossByRoadId(Cross &a, Cross &b) {
+        for (int roadId : a.roadIds) {
+            if (roadId != -1)
+                for (int &j : b.roadIds) {
+                    if (j != -1 && roadId == j) {
+                        j = -1;
+                        return roadId;
+                    }
+                }
+        }
+        return -1;
+    }
+
+//    void floyd(vector<Car> &car, map<int, Road> &road,
+//               vector<Cross> &cross) {//I will re-write cross value,so do not need reference(&)
+//        int num = int(cross.size());
+//
+//        int path[num][num], dist[num][num];
+//        memset(dist, -1, sizeof(dist));
+//        int i, j, k;
+//        int tmp;
+//        map<string, int> cross2road;
+//        // init cross id begin from 1
+//        //find road to construct adjacent matrix
+//        for (int l = 0; l < num - 1; l++) {
+//            dist[l][l] = 0;
+//            for (int m = l + 1; m < num; m++) {
+//                tmp = findCrossByRoadId(cross[l], cross[m]);
+//                if (tmp != -1) {
+//                    if (road[tmp].isDuplex) {
+//                        dist[l][m] = road[tmp].length;
+//                        dist[m][l] = road[tmp].length;
+//                        cross2road[to_string(m) + "_" + to_string(l)] = tmp;
+//                    } else
+//                        dist[l][m] = road[tmp].length;
+//                    cross2road[to_string(l) + "_" + to_string(m)] = tmp;
+//                }
+//            }
+//        }
+//        dist[num - 1][num - 1] = 0;
+//
+//        for (int l = 0; l < num; l++) {
+//            for (int i = 0; i < num; i++) {
+//                if (dist[l][i] == -1)
+//                    dist[l][i] = int(INFINITY);
+//                path[l][i] = i;
+//            }
+//        }
+//
+//        //computing
+//        for (k = 0; k < num; k++) {
+//            for (i = 0; i < num; i++) {
+//                for (j = 0; j < num; j++) {
+//                    tmp = (dist[i][k] == int(INFINITY) || dist[k][j] == int(INFINITY)) ? int(INFINITY) : (dist[i][k] +
+//                                                                                                          dist[k][j]);
+//                    if (dist[i][j] > tmp) {
+//                        dist[i][j] = tmp;
+//                        path[i][j] = path[i][k];
+//                    }
+//                }
+//            }
+//        }
+//
+//        for (Car &c:car) {
+//            vector<int> roadIds;
+//            tmp = path[c.from - 1][c.to - 1];
+//            //distance:dist[k][i]
+//            roadIds.emplace_back(cross2road[to_string(c.from - 1) + "_" + to_string(tmp)]);
+//            if (tmp != int(INFINITY))
+//                //loop for path getting
+//                while (tmp != c.to - 1) {
+//                    i = tmp;
+//                    tmp = path[tmp][c.to - 1];
+//                    roadIds.emplace_back(cross2road[to_string(i) + "_" + to_string(tmp)]);
+//                }
+//            answer.emplace_back(Answer(c.id, c.planTime, roadIds));
+//        }
+//        //        print
+////        for (k = 0; k < num; k++) {
+////            for (i = k + 1; i < num; i++) {
+////                cout << "v" << to_string(k + 1) << "---" << "v" << to_string(i + 1) << " weight: "
+////                     << dist[k][i] << " path: " << " v" << to_string(k + 1);
+////                tmp = path[k][i];
+////                //loop for path getting
+////                while (tmp != i) {
+////                    cout << "-->" << "v" << to_string(tmp + 1);
+////                    tmp = path[tmp][i];
+////                }
+////                cout << "-->" << "v" << to_string(i + 1) << endl;
+////            }
+////
+////            cout << endl;
+////        }
+//    }
+//
+//    void floyd2(vector<Car> &car, map<int, Road> &road,
+//                vector<Cross> &cross) {
+//        //this is planTime optimized version 1 of floyd
+//        floyd(car, road, cross);
+//        sort(answer.begin(), answer.end(), comp);
+//
+//        int bin = 0;
+//        if (maxStartTime != -1)
+//            bin = int(answer.size()) / maxStartTime;
+//        else
+//            bin = 1;
+//
+//        for (int i = 0; i < int(answer.size()); i++) {
+//            if (i / bin > answer[i].startTime) {
+//                answer[i].startTime = i / bin;
+//            }
+//        }
+//    }
+
+//    void floyd3(vector<Car> &car, map<int, Road> &road,
+//                vector<Cross> &cross) {
+//        //this is planTime optimized version 3 of floyd
+//        //Accoring test results, this method have no effectiveness
+//        floyd(car, road, cross);
+//        sort(answer.begin(), answer.end(), comp);
+//
+//        int bin = 0;
+//        if (maxStartTime != -1)
+//            bin = int(answer.size()) / maxStartTime;
+//        else
+//            bin = 1;
+//
+//        map<int, int> numCarInRoad;//<roadId, numberCarInThisRoad>
+//        map<int, int>::iterator it;
+//        for (int i = 0; i < int(answer.size()); i++) {
+//            it = numCarInRoad.find(answer[i].roadId[0]);//till now, I just consider the beginning position
+//            if (it == numCarInRoad.end()) {
+//                numCarInRoad[answer[i].roadId[0]] = 0;
+//                it = numCarInRoad.find(answer[i].roadId[0]);
+//            }
+//            if (i / bin > answer[i].startTime) {
+//                answer[i].startTime = i / bin + it->second /
+//                                                (road[answer[i].roadId[0]].length / carFactor[0]) * carFactor[1];
+//            }
+//            it->second += 1;
+//        }
+//    }
+
+    void floyd4(vector<Car> &car, map<int, Road> &road,
+                vector<Cross> &cross) {
+        //this is planTime optimized version 4 of floyd
+        //speed lower, go faster
+        int i, j, k;
+        int tmp;
+
+        int num = int(cross.size());
+        path = (int **) malloc(num * sizeof(int *));
+        for (i = 0; i < num; i++)
+            path[i] = (int *) malloc(num * sizeof(int));
+        dist = (int **) malloc(num * sizeof(int *));
+        for (i = 0; i < num; i++)
+            dist[i] = (int *) malloc(num * sizeof(int));
+        for (i = 0; i < num; i++)
+            for (j = 0; j < num; j++)
+                dist[i][j] = -1;
+
+
+        map<string, int> cross2road;
+        // init cross id begin from 1
+        //find road to construct adjacent matrix
+        for (int l = 0; l < num - 1; l++) {
+            dist[l][l] = 0;
+            for (int m = l + 1; m < num; m++) {
+                tmp = findCrossByRoadId(cross[l], cross[m]);
+                if (tmp != -1) {
+                    if (road[tmp].isDuplex) {
+                        dist[l][m] = road[tmp].length;
+                        dist[m][l] = road[tmp].length;
+                        cross2road[to_string(m) + "_" + to_string(l)] = tmp;
+                    } else
+                        dist[l][m] = road[tmp].length;
+                    cross2road[to_string(l) + "_" + to_string(m)] = tmp;
+                }
+            }
+        }
+        dist[num - 1][num - 1] = 0;
+
+        for (int l = 0; l < num; l++) {
+            for (i = 0; i < num; i++) {
+                if (dist[l][i] == -1)
+                    dist[l][i] = int(INFINITY);
+                path[l][i] = i;
+            }
+        }
+
+        //computing
+        for (k = 0; k < num; k++) {
+            for (i = 0; i < num; i++) {
+                for (j = 0; j < num; j++) {
+                    tmp = (dist[i][k] == int(INFINITY) || dist[k][j] == int(INFINITY)) ? int(INFINITY) : (dist[i][k] +
+                                                                                                          dist[k][j]);
+                    if (dist[i][j] > tmp) {
+                        dist[i][j] = tmp;
+                        path[i][j] = path[i][k];
+                    }
+                }
+            }
+        }
+
+        for (Car &c:car) {
+            vector<int> roadIds;
+            tmp = path[c.from - 1][c.to - 1];
+            //distance:dist[k][i]
+            roadIds.emplace_back(cross2road[to_string(c.from - 1) + "_" + to_string(tmp)]);
+            if (tmp != int(INFINITY))
+                //loop for path getting
+                while (tmp != c.to - 1) {
+                    i = tmp;
+                    tmp = path[tmp][c.to - 1];
+                    roadIds.emplace_back(cross2road[to_string(i) + "_" + to_string(tmp)]);
+                }
+            answer.emplace_back(Answer(c.id, c.planTime, roadIds, c.speed, c.id2));
+        }
+
+        sort(answer.begin(), answer.end(), compAnswer);
+
+        int bin = 0;
+        if (maxStartTime != -1)
+            bin = int(answer.size()) / maxStartTime;
+        else
+            bin = 1;
+
+        for (int i = 0; i < int(answer.size()); i++) {
+            if (i / bin > answer[i].startTime) {
+                answer[i].startTime = i / bin;
+                answer[i].planTime = i / bin;
+            }
+        }
+
+
+    }
+
+//
+//    void floyd5(vector<Car> &car, map<int, Road> &road,
+//                vector<Cross> &cross) {
+//        //this is planTime optimized version 4 of floyd
+//        //road shorter, go faster
+//        //this is usefulness
+//        int num = int(cross.size());
+//
+//        int path[num][num], dist[num][num];
+//        memset(dist, -1, sizeof(dist));
+//        int i, j, k;
+//        int tmp;
+//        map<string, int> cross2road;
+//        // init cross id begin from 1
+//        //find road to construct adjacent matrix
+//        for (int l = 0; l < num - 1; l++) {
+//            dist[l][l] = 0;
+//            for (int m = l + 1; m < num; m++) {
+//                tmp = findCrossByRoadId(cross[l], cross[m]);
+//                if (tmp != -1) {
+//                    if (road[tmp].isDuplex) {
+//                        dist[l][m] = road[tmp].length;
+//                        dist[m][l] = road[tmp].length;
+//                        cross2road[to_string(m) + "_" + to_string(l)] = tmp;
+//                    } else
+//                        dist[l][m] = road[tmp].length;
+//                    cross2road[to_string(l) + "_" + to_string(m)] = tmp;
+//                }
+//            }
+//        }
+//        dist[num - 1][num - 1] = 0;
+//
+//        for (int l = 0; l < num; l++) {
+//            for (int i = 0; i < num; i++) {
+//                if (dist[l][i] == -1)
+//                    dist[l][i] = int(INFINITY);
+//                path[l][i] = i;
+//            }
+//        }
+//
+//        //computing
+//        for (k = 0; k < num; k++) {
+//            for (i = 0; i < num; i++) {
+//                for (j = 0; j < num; j++) {
+//                    tmp = (dist[i][k] == int(INFINITY) || dist[k][j] == int(INFINITY)) ? int(INFINITY) : (dist[i][k] +
+//                                                                                                          dist[k][j]);
+//                    if (dist[i][j] > tmp) {
+//                        dist[i][j] = tmp;
+//                        path[i][j] = path[i][k];
+//                    }
+//                }
+//            }
+//        }
+//
+//        for (Car &c:car) {
+//            vector<int> roadIds;
+//            tmp = path[c.from - 1][c.to - 1];
+//            //distance:dist[k][i]
+//            roadIds.emplace_back(cross2road[to_string(c.from - 1) + "_" + to_string(tmp)]);
+//            if (tmp != int(INFINITY))
+//                //loop for path getting
+//                while (tmp != c.to - 1) {
+//                    i = tmp;
+//                    tmp = path[tmp][c.to - 1];
+//                    roadIds.emplace_back(cross2road[to_string(i) + "_" + to_string(tmp)]);
+//                }
+//            int sum = accumulate(roadIds.begin(), roadIds.end(), 0);
+//            answer.emplace_back(Answer(c.id, c.planTime, roadIds, sum));
+//        }
+//
+//        sort(answer.begin(), answer.end(), compAnswer);
+//
+//        int bin = 0;
+//        if (maxStartTime != -1)
+//            bin = int(answer.size()) / maxStartTime;
+//        else
+//            bin = 1;
+//
+//        for (int i = 0; i < int(answer.size()); i++) {
+//            if (i / bin > answer[i].startTime) {
+//                answer[i].startTime = i / bin;
+//            }
+//        }
+//    }
+
+
+
+
+
+    static bool comp(Answer a, Answer b) {
+        return a.startTime < b.startTime;
+    }
+
+    static bool compAnswer(Answer a, Answer b) {
+        //used for floyd4
+        if (a.alternateDomain == b.alternateDomain)
+            return a.startTime < b.startTime;
+        else
+            return a.alternateDomain < b.alternateDomain;
+    }
+
+    static bool compCar(Car a, Car b) {
+        return a.id < b.id;
+    }
+
+    static bool compCross(Cross a, Cross b) {
+        return a.id < b.id;
+    }
+//    void constructAnswerAfterOptimize(vector<Car> &car) {
+//        for (Car &ca:car)
+//            answer.push_back(ca.answer);
+//    }
+
+
+    vector<Answer> schedulerTest(vector<Car> &car, map<int, Road> &road, vector<Cross> &cross) {
+        //sort car by id for go out of garage ordered by id
+        map<int, Answer> answerMap;
+        for (Answer &ans:answer)
+            answerMap.insert(pair<int, Answer>(ans.carId, ans));
+        sort(car.begin(), car.end(), compCar);
+        for (Car &ca:car)
+            ca.answer = answerMap[ca.id];
+        int firstTimeCarOnRoad = 1000000;
+        for (Car &ca:car)
+            if (ca.answer.startTime < firstTimeCarOnRoad)
+                firstTimeCarOnRoad = ca.answer.startTime;
+
+        answer.clear();
+        answerMap.clear();//free memory
+        //sort cross for loop on cross
+        sort(cross.begin(), cross.end(), compCross);
+        Scheduler sche(int(car.size()));
+        int t = 1, state = UN_LOCK;
+        while (state == UN_LOCK) {
+            state = sche.oneStep(car, road, cross, t, firstTimeCarOnRoad);
+            t++;
+            cout << t << endl;
+        }
+        if (state == FINISH) {
+            cout << "\n time cost: " << t << endl;
+            return sche.getAnswer();
+        } else //state==DEAD_LOCK, it will output remind in Scheduler, so here I need not to output something
+            exit(-1);
+    }
+
+
+public:
+
+    vector<Answer> answer;
+    int **path;//path
+    int **dist;//distance
+
+    vector<Answer> getAllCarRoadAnswers(vector<Car> &car, map<int, Road> &road, vector<Cross> cross) {
+        vector<Cross> cross2 = cross;
+        floyd4(car, road, cross);// generate answer,the cross has been revised, so need save a copy
+//        cross.clear();
+//        answer = schedulerTest(car, road, cross2);//optimize path
+//        sort(answer.begin(), answer.end(), comp);
+
+        return answer;
+
+    }
+
+
+};

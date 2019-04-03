@@ -1,0 +1,49 @@
+#include <iostream>
+#include "elements/IO.h"
+#include <string>
+#include "Process.h"
+
+
+using namespace std;
+
+int main(int argc, char *argv[]) {
+
+    if (argc < 5) {
+        std::cout << "please input args: carPath, roadPath, crossPath, answerPath" << std::endl;
+        exit(1);
+    }
+
+    std::string carPath(argv[1]);
+    std::string roadPath(argv[2]);
+    std::string crossPath(argv[3]);
+    std::string answerPath(argv[4]);
+
+    std::cout << "carPath is " << carPath << std::endl;
+    std::cout << "roadPath is " << roadPath << std::endl;
+    std::cout << "crossPath is " << crossPath << std::endl;
+    std::cout << "answerPath is " << answerPath << std::endl;
+
+//	// TODO:read input filebuf
+    IO io;
+    vector<Car> car = io.read<Car>(carPath);
+    map<int, Road> road = io.readRoad(roadPath);
+    vector<Cross> cross = io.read<Cross>(crossPath);
+    //config_0~1 a little cars
+    //config2~7 512 cars
+    //config8~10 2048 cars
+
+
+    // TODO:process
+
+
+    Process process;
+    vector<Answer> answer = process.getAllCarRoadAnswers(car, road, cross);
+
+
+
+    // TODO:write output file
+    io.write(answerPath, answer);
+
+
+    return 0;
+}
